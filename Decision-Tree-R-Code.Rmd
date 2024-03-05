@@ -1,0 +1,190 @@
+---
+title: "Decision Tree R Code"
+author: "ERICK@GURU"
+date: "2024-03-05"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Decision Tree R Code
+
+Decision trees are mainly classification and regression types.
+
+Classification means Y variable is factor and regression type means Y variable is numeric.
+
+Just look at one of the examples from each type,
+
+Classification example is detecting email spam data and regression tree example is from Boston housing data.
+
+Decision trees are also called Trees and CART.
+
+CART indicates classification and regression trees.
+
+The main goal behind the classification tree is to classify or predict an outcome based on a set of predictors.
+
+`Advantageous of Decision Trees`
+
+Easy Interpretation
+
+Making predictions is fast
+
+Easy to identify important variables
+
+Handless missing data
+
+One of the drawbacks is to can have high variability in performance.
+
+Recursive portioning- basis can achieve maximum homogeneity within the new partition.
+
+### Method 1:- Classification Tree
+
+#### Load Library
+
+```{r warning=FALSE, message=FALSE}
+library(DAAG)
+library(party)
+library(rpart)
+library(rpart.plot)
+library(mlbench)
+library(caret)
+library(pROC)
+library(tree)
+library(rsample)
+library(dplyr)
+```
+
+#### Getting Data -Email Spam Detection
+
+```{r}
+spam7 %>% glimpse()
+head(spam7)
+dim(spam7)
+```
+
+Total 4601 observations and 7 variables.
+
+```{r}
+mydata <- spam7
+```
+
+#### Data Partition
+
+```{r}
+set.seed(1234)
+ind <- sample(2, nrow(mydata), replace = T, prob = c(0.5, 0.5))
+train <- mydata[ind == 1,]
+test <- mydata[ind == 2,]
+#Tree Classification
+tree <- rpart(yesno ~., data = train)
+rpart.plot(tree)
+######################
+set.seed(1234)
+split <- initial_split(mydata, prop = 1/2)
+test <- testing(split)
+train <- training(split)
+#Tree Classification
+tree <- rpart(yesno ~., data = train)
+rpart.plot(tree)
+```
+
+```{r}
+printcp(tree)
+```
+
+```{r}
+plotcp(tree)
+```
+
+You can change the cp value according to your data set. Please note lower cp value means the bigger the tree. If you are using too lower cp that leads to overfitting also.
+
+```{r}
+tree <- rpart(yesno~., data = train,
+              control = rpart.control(cp = 0.07444))
+summary(tree)
+
+plotcp(tree)
+```
+
+#### Confusion matrix -train
+
+```{r}
+p <- predict(tree, train, type = 'class')
+confusionMatrix(p, train$yesno, 'positive'='y')
+```
+
+#### ROC
+
+```{r}
+p1 <- predict(tree, test, type = 'prob')
+p1 <- p1[,2]
+r <- multiclass.roc(test$yesno, p1, percent = TRUE)
+roc <- r[['rocs']]
+r1 <- roc[[1]]
+plot.roc(r1,
+         print.auc=TRUE,
+         auc.polygon=TRUE,
+         grid=c(0.1, 0.2),
+         grid.col=c("green", "red"),
+         max.auc.polygon=TRUE,
+         auc.polygon.col="lightblue",
+         print.thres=TRUE,
+         main= 'ROC Curve')
+```
+
+### Method 2- Regression  Tree
+
+```{r}
+data('BostonHousing')
+mydata <- BostonHousing
+head(mydata)
+dim(mydata)
+```
+
+#### Data Partition
+
+```{r}
+set.seed(123456)
+split <- initial_time_split(mydata, prop = 90/100, lag = 0)
+train <- training(split)
+test <- testing(split)
+
+#Regression tree
+tree <- rpart(medv ~., data = train)
+rpart.plot(tree)
+```
+
+```{r}
+# summary(tree)
+printcp(tree)
+```
+
+```{r}
+plotcp(tree)
+```
+
+#### Predict
+
+```{r}
+p <- predict(tree, train)
+```
+
+### Root Mean Square Error
+
+```{r}
+sqrt(mean((train$medv-p)^2))
+```
+
+### R Square
+
+```{r}
+(cor(train$medv,p))^2
+```
+
+## Conclusion
+
+In the regression model, the r square value is 80% and RMSE is 4.13, not bad at all..In this way, you can make use of Decision classification regression tree models.
