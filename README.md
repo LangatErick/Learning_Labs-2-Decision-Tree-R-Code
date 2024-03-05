@@ -8,6 +8,8 @@
 
 The classification example is detecting email spam data and the regression tree example is from Boston housing data.
 
+![image](https://github.com/LangatErick/Learning_Labs-2-Decision-Tree-R-Code/assets/124883947/d929c7fa-8221-4a75-bdb0-f7d5af75c1b7)
+
 ## Decision trees are also called Trees and CART.
 
 - CART indicates classification and regression trees.
