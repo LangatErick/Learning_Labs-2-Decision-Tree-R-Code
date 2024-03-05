@@ -2,9 +2,11 @@
 
 ## Decision trees are mainly classification and regression types.
 
-- Classification means Y variable is factor and regression type means Y variable is numeric. Just look at one of the examples from each type,
+![image](https://github.com/LangatErick/Learning_Labs-2-Decision-Tree-R-Code/assets/124883947/37c9d712-4860-4dc5-b8ae-fcd98d6eb0fd)
 
-- Classification example is detecting email spam data and regression tree example is from Boston housing data.
+- Classification means the Y variable is a factor and regression type means the Y variable is numeric. Just look at one of the examples from each type,
+
+The classification example is detecting email spam data and the regression tree example is from Boston housing data.
 
 ## Decision trees are also called Trees and CART.
 
